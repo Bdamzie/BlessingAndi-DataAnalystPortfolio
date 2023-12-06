@@ -1,0 +1,78 @@
+	POWER BI DAX SHEET SCRIPT										
+--Update db 
+(vw_Fulldetailslatest) Include time_stamp 
+from SLA as DATEADD(second,al.time_stamp, '1/1/1970') [breach_time]
+
+											
+--Update SQL Source Script on powerbi to exclude unwanted assignment areas, that is 
+
+SELECT [id]
+,[priority]
+,[ref_num]
+,[department_name]
+,[Region]
+,[Region1]
+,[branch]
+,[sym]
+,[Locatn]
+,[DEPT]
+,[DEPT1]
+,
+[UNIT]
+,[Issue_classification]
+,[Issue_CLASSIFICATION1]
+,[customer]
+,[LogAgent]
+,[Analyst]
+,[Assignment]
+,
+[Last_Treated]
+,[description]
+,[incident_id]
+,[breached]
+,[type]
+,[event_type]
+,[event_description]
+,[ca_site_id]
+,
+[time_spent_sum]
+,[tenant]
+,[status]
+,[active_flag]
+,[breach_time]
+,[open_time]
+,[Resolve_Time]
+,[last_mod_time]
+,
+[Assignee_SLA2]
+FROM [mdb].[dbo].[vw_Fulldetailslatest]
+
+Where (Assignment NOT LIKE '%Cluster%'
+and Assignment NOT LIKE 'Channels(ITSR)%' 
+and Assignment NOT LIKE '%Maker%'
+and Assignment NOT LIKE '%NCR%' 
+and Assignment NOT LIKE '%NOC%'
+and Assignment NOT LIKE '%TEKPLUGIN%' 
+and Assignment NOT LIKE '%Checker%'
+and Assignment NOT LIKE '%Finacle core%' 
+and Assignment NOT LIKE '%Hardware%'
+and Assignment NOT LIKE '%FSS Project%' 
+and Assignment NOT LIKE '%Head IT Infrastructure%'
+and Assignment NOT LIKE '%Inlaks%'
+
+and Assignment NOT LIKE '%Network%' and Assignment NOT LIKE '%RICO%'
+and Assignment NOT LIKE '%Swipe%' 
+and Assignment NOT LIKE '% - Secretariat%', 
+and Assignment NOT LIKE '%User access mgt%') 
+and
+(open_time > '2020-12-31')"			
+
+								
+--DAX to extract weekdays and create a 9 hour working period from 9am-5pm as 
+
+ExcludeWeekends = CALCULATE(COUNTROWS('Calendar'),FILTER('Calendar',
+WEEKDAY('Calendar'[Date],2)<6),DATESBETWEEN('Calendar'[Date],'Query1 (2)'[Time_Reassigned],
+'Query1 (2)'[Resolve_Time]))
+Duration = 'Query1 (2)'[ExcludeWeekends] * 9
+ 
+Addduration(hh,mm,ss) = Extract time from reolved time"											
